@@ -101,7 +101,8 @@ class Player:
             distx = abs(mic.x-cell.pos[0])
             disty = abs(mic.y-cell.pos[1])
             dist = distx + disty + cell.dist
-            mic.record(self.noise.get_apparent_sound(t,dist),t)
+            mic.record(dist,t)
+            #mic.record(self.noise.get_apparent_sound(t,dist),t)
         """
         if cell.mic is not None:
             mic = mics[cell.mic]

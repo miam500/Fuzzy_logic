@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 class Noise:
     def __init__(self,dB=0):
@@ -21,7 +22,7 @@ class Noise:
         iy = int((y) // TILE)
 
         cell = grid_cells[ix][iy]
-        if cell.dist > dist:
+        if dist < cell.dist:
 
             cell.dist = dist
             cell.pos = pos
@@ -31,22 +32,20 @@ class Noise:
             dist_to_top =  y - (iy * TILE)
             dist_to_bot =  ((iy+1) * TILE) - y
 
-            if not cell.walls['left']:
-                pos = (x-dist_to_left-1, y)
-                dist += dist_to_left
-                self.propagate_sound(pos,grid_cells,mics,t,dist)
-            if not cell.walls['right']:
-                pos = (x+dist_to_right+1, y)
-                dist += dist_to_right
-                self.propagate_sound(pos,grid_cells,mics,t,dist)
-            if not cell.walls['top']:
-                pos = (x, y - dist_to_top - 1)
-                dist += dist_to_top
-                self.propagate_sound(pos,grid_cells,mics,t,dist)
-            if not cell.walls['bot']:
-                pos = (x, y + dist_to_bot + 1) 
-                dist += dist_to_bot
-                self.propagate_sound(pos,grid_cells,mics,t,dist)
+            order = np.argsort([dist_to_left,dist_to_right,dist_to_top,dist_to_bot])
+            for i in order:
+                if not cell.walls['left'] and i == 0:
+                    pos = (x-dist_to_left-1, y)
+                    self.propagate_sound(pos,grid_cells,mics,t,dist+dist_to_left)
+                if not cell.walls['right'] and i == 1:
+                    pos = (x+dist_to_right+1, y)
+                    self.propagate_sound(pos,grid_cells,mics,t,dist+dist_to_right)
+                if not cell.walls['top']  and i == 2:
+                    pos = (x, y - dist_to_top - 1)
+                    self.propagate_sound(pos,grid_cells,mics,t,dist+dist_to_top)
+                if not cell.walls['bot']  and i == 3:
+                    pos = (x, y + dist_to_bot + 1) 
+                    self.propagate_sound(pos,grid_cells,mics,t,dist+dist_to_bot)
 
 
 class Constant_Noise(Noise):
