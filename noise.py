@@ -63,5 +63,5 @@ class Sine_Noise(Noise):
         self.w = w
 
     def get_amplitude(self,t):
-        return self.dB * math.sin(self.w*t)
+        return self.dB * math.sin(self.w*t) + self.dB
 
