@@ -3,14 +3,15 @@ import random
 from map import *
 from player import *
 from noise import *
+from fuzzyLogic import *
 
 FPS = 30
 
 pygame.init()
 
-grid_cells, mics = get_map(43)
+grid_cells, mics = get_map(42)
 
-
+controller = MSE(grid_cells,mics)
 sc = pygame.display.set_mode(RESOLUTION)
 clock = pygame.time.Clock()
 
@@ -46,6 +47,8 @@ while loop:
             
     player.update(grid_cells)
     player.draw(sc)
+    
+    controller.draw(sc)
 
     player.propagate_sound(grid_cells,mics,t)
     pygame.display.flip()
