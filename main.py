@@ -9,9 +9,9 @@ FPS = 30
 
 pygame.init()
 
-grid_cells, mics = get_map(42)
+grid_cells, mics = get_map(43)
 
-controller = MSE(grid_cells,mics)
+controller = MSE_linear(grid_cells,mics)
 sc = pygame.display.set_mode(RESOLUTION)
 clock = pygame.time.Clock()
 
@@ -48,9 +48,13 @@ while loop:
     player.update(grid_cells)
     player.draw(sc)
     
-    controller.draw(sc)
 
     player.propagate_sound(grid_cells,mics,t)
+
+    
+    controller.draw(sc)
+
+
     pygame.display.flip()
 
     t += 1/FPS

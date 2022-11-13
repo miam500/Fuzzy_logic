@@ -46,7 +46,8 @@ def createFuzzyController():
 
 
 class Controller():
-    def __init__(self,grid_cells,mics):
+    def __init__(self,grid_cells,mics,membership_fcns = 5):
+        self.n_membership = membership_fcns
         self.grid = grid_cells
         self.mics = mics
         self.size = 5
@@ -66,8 +67,55 @@ class Controller():
         x,y = self.get_pos_prediction()
         pygame.draw.circle(sc,self.color,center=(x,y),radius=self.size)
 
-# Basé sur le ppt chapitre #5, pt mal implementé
-class MSE(Controller):
+class MSE_linear(Controller):
+    def __init__(self, grid_cells, mics):
+        super().__init__(grid_cells, mics)
+
+        from map import TILE
+        from player import Player
+
+        self.phi = []
+        self.Yx = []
+        self.Yy = []
+        dummy = Player((0,0))
+        dummy.add_noise(Constant_Noise(40))
+        for row in grid_cells:
+            row_phi = []
+            for cell in row:
+                x = cell.x * TILE + TILE/2
+                y = cell.y * TILE + TILE/2
+                dummy.x, dummy.y = x,y
+                dummy.propagate_sound(grid_cells,mics,0)
+                row_phi += [self.get_input()]
+                self.Yx += [x]
+                self.Yy += [y]
+
+            if len(self.phi):
+                self.phi = np.vstack((self.phi,row_phi))
+            else:
+                self.phi = row_phi
+
+        inv = np.linalg.inv(self.phi.T@self.phi)@self.phi.T
+        self.theta_x = inv@self.Yx
+        self.theta_y = inv@self.Yy
+        
+        for mic in mics:
+            mic.data = []
+            mic.t = []
+
+    
+    def get_pos_prediction(self):
+        x = self.get_prediction(self.theta_x)
+        y = self.get_prediction(self.theta_y)
+        return x,y
+
+    def get_prediction(self,theta):
+        input = np.array(self.get_input())
+        out = np.matmul(theta.T,input.T)
+        return out
+
+
+class MSE_Fuzzy(Controller):
     def __init__(self, grid_cells, mics):
         super().__init__(grid_cells, mics)
 
@@ -112,4 +160,5 @@ class MSE(Controller):
         out = np.matmul(theta.T,input.T)
         return out
 
-        
+class Dummy_Name(Controller):
+    pass

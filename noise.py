@@ -11,8 +11,10 @@ class Noise:
     def get_apparent_sound(self,t,pixels):
         from map import TILE
         distance = pixels / TILE
-        dB = self.get_amplitude(t)
-        return  dB / (distance**2)
+        amp = self.get_amplitude(t)
+        pressure = amp / (distance**2)
+        dB = 10*math.log10(pressure)
+        return  dB
 
     def propagate_sound(self,pos,grid_cells,mics,t,dist = 0):
         
