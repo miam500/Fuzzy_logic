@@ -11,7 +11,7 @@ pygame.init()
 
 grid_cells, mics = get_map(43)
 
-controller = MSE_linear(grid_cells,mics)
+controller = MSE_Fuzzy(grid_cells,mics)
 sc = pygame.display.set_mode(RESOLUTION)
 clock = pygame.time.Clock()
 

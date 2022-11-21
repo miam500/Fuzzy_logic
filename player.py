@@ -102,12 +102,9 @@ class Player:
             disty = abs(mic.y-cell.pos[1])
             dist = distx + disty + cell.dist
             mic.record(self.noise.get_apparent_sound(t,dist),t)
-        """
-        if cell.mic is not None:
-            mic = mics[cell.mic]
-            diffx = abs(mic.x-x)
-            diffy = abs(mic.y-y)
-            dist += diffx + diffy
-            mic.record(self.get_apparent_sound(t,dist),t)
-            return
-            """
+        
+        
+        for col in grid_cells:
+            for cell in col:
+                cell.dist = 99999
+
