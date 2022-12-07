@@ -94,8 +94,15 @@ class Player:
     def get_pos(self):
         return self.x,self.y
 
-    def propagate_sound(self,grid_cells,mics,t):
-        self.noise.propagate_sound(self.get_pos(),grid_cells,mics,t)
+    def propagate_sound(self,grid_cells,mics,t,method = 'astar'):
+        if method == 'astar':
+            self.noise.propagate_sound_astar(self.get_pos(),grid_cells,t,mics)
+            return
+        elif method == 'dijstra': ### Do not use
+            self.noise.propagate_sound_dijkstra(self.get_pos(),grid_cells,mics,previous_cells=[])
+        else:
+            self.noise.propagate_sound(self.get_pos(),grid_cells,mics,previous_cells=[])
+        
         for mic in mics:
             cell = grid_cells[mic.cell_idx[0]][mic.cell_idx[1]]
             distx = abs(mic.x-cell.pos[0])

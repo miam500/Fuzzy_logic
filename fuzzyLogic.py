@@ -1,3 +1,4 @@
+import itertools
 import matplotlib.pyplot as plt
 import numpy as np
 import pygame
@@ -50,7 +51,7 @@ def createFuzzyController():
 
 
 class Controller():
-    def __init__(self,grid_cells,mics,sampling_grid = 2,membership_fcns = 5):
+    def __init__(self,grid_cells,mics,sampling_grid =20,membership_fcns = 5):
         self.n_membership = membership_fcns
         self.grid = grid_cells
         self.mics = mics
@@ -69,11 +70,16 @@ class Controller():
 
         grid = self.sampling_grid
 
-        for col in grid_cells:
+        print("Generating Fuzzy clustering")
+        print('')
+        total = len(grid_cells)*len(grid_cells[0])*grid*grid
+        for i, col in enumerate(grid_cells):
             col_data = []
-            for cell in col:
+            for j, cell in enumerate(col):
                 for ix in range(grid):
                     for iy in range(grid):
+                        progress = 100*(i*len(grid_cells[0])*grid**2+j*grid**2+ix*grid+iy)/total
+                        print(f"\rProgress:{progress} %")
                         x = cell.x * TILE + (ix+1)*TILE/(grid+1)
                         y = cell.y * TILE + (iy+1)*TILE/(grid+1)
                         dummy.x, dummy.y = x,y
@@ -107,7 +113,7 @@ class Controller():
 
     def draw(self,sc):
         x,y = self.get_pos_prediction()
-        print(x,y)
+        #print(x,y)
         pygame.draw.circle(sc,self.color,center=(x,y),radius=self.size)
 
 class MSE_linear(Controller):
