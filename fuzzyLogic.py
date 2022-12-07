@@ -283,4 +283,10 @@ class MSE_Fuzzy(Controller):
         eps = self.get_eps()
         out = np.matmul(theta.T,eps.T)
         return out
+    
+    def step_array(self, len_of):
+        arr = []
+        for i in range(len_of):
+            arr.append(i)
+        return arr
 
