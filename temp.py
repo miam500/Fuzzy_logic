@@ -1,4 +1,5 @@
 from test import *
+from fuzzyLogic_MLFE import MLFE
 
 ##############################
 # décommenté "test_conventinnal()" pour tester la technique conventionnel
@@ -20,6 +21,7 @@ from test import *
 
 
 ##############################
-# décommenté "test_conventinnal()" pour tester la technique conventionnel
+# décommenté "MLFE()" pour tester la technique MLFE
 #
 ##############################
+MLFE()
