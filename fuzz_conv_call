@@ -1,6 +1,6 @@
 from player import *
 from noise import *
-from fuzzyLogic2 import *
+from fuzzyLogic_conventional import *
 
 
 def test_conventinnal():
