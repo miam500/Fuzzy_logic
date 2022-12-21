@@ -43,7 +43,7 @@ class Player:
             self.move_down= True
             
     def save_noise(self,grid_cells,mics,t):
-        self.propagate_sound(grid_cells,mics,t,True)
+        self.propagate_sound(grid_cells,mics,t,True, method='old')
 
     def save_noises_to_file(self):
         reps = int(WIDTH/TILE)
@@ -144,9 +144,10 @@ class Player:
             else:
                 self.noises = np.vstack((self.noises, noises))
         
-        for col in grid_cells:
-            for cell in col:
-                cell.dist = 99999
+        if method != 'old':
+            for col in grid_cells:
+                for cell in col:
+                    cell.dist = 99999
                 
     def estimate_pos(self, fuzzy_ctrl, mics, grid_cells, t):
         for k in range(0, len(mics)):
