@@ -1,4 +1,4 @@
-from test import *
+from fuzz_conv_call import *
 from fuzzyLogic_MLFE import MLFE
 
 ##############################
