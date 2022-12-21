@@ -15,6 +15,7 @@ COLOR_MIC = pygame.Color('green')
 COLOR_UNVISITED = pygame.Color('darkslategray')
 COLOR_VISITED = pygame.Color('black')
 COLOR_CURRENT = pygame.Color('yellow')
+COLOR_PREDICTION = pygame.Color('blue')
 
 def get_map(seed):
     from os.path import exists
@@ -132,11 +133,13 @@ class Cell:
         self.pos = (0,0)
 
 
-    def draw(self,sc):
+    def draw(self,sc, color=None):
         x, y = self.x * TILE, self.y * TILE
-        if self.visited:
+        if self.visited & (color is None):
             pygame.draw.rect(sc, COLOR_VISITED, (x, y, TILE, TILE))
-
+        elif color is not None:
+            pygame.draw.rect(sc, color, (x, y, TILE, TILE))
+            
         if self.walls['top']:
             pygame.draw.line(sc, COLOR_WALL, (x, y), (x + TILE, y), 1)
         if self.walls['bot']:
