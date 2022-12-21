@@ -33,9 +33,6 @@ def MLFE():
     t = 0
     loop = True
 
-    # Technique 4
-    # DATAFILE = 'iodatacustom.mat'
-    # THETAFILE = 'fcparamscustom4.mat'
     data = scipy.io.loadmat(DATAFILE)
     theta = scipy.io.loadmat(THETAFILE)
     fuzzy_ctrl = Controller_MLFE(grid_cells, mics, data, theta)
@@ -73,7 +70,7 @@ def MLFE():
         player.update(grid_cells)
         player.draw(sc)
 
-        player.propagate_sound(grid_cells, mics, t)
+        player.propagate_sound(grid_cells, mics, t, method='old')
 
         # Estimate position & measure performance
         est_pos = player.estimate_pos(fuzzy_ctrl, mics, grid_cells, t)
