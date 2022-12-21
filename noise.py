@@ -38,16 +38,16 @@ class Noise:
             for i in order:
                 if not cell.walls['left'] and i == 0 and not come_from == 'right':
                     pos = (x - dist_to_left - 1, y)
-                    self.propagate_sound(pos, grid_cells, mics, t, dist + dist_to_left, 'left')
+                    self.propagate_sound_old(pos, grid_cells, mics, t, dist + dist_to_left, 'left')
                 if not cell.walls['right'] and i == 1 and not come_from == 'left':
                     pos = (x + dist_to_right + 1, y)
-                    self.propagate_sound(pos, grid_cells, mics, t, dist + dist_to_right, 'right')
+                    self.propagate_sound_old(pos, grid_cells, mics, t, dist + dist_to_right, 'right')
                 if not cell.walls['top'] and i == 2 and not come_from == 'bot':
                     pos = (x, y - dist_to_top - 1)
-                    self.propagate_sound(pos, grid_cells, mics, t, dist + dist_to_top, 'top')
+                    self.propagate_sound_old(pos, grid_cells, mics, t, dist + dist_to_top, 'top')
                 if not cell.walls['bot'] and i == 3 and not come_from == 'top':
                     pos = (x, y + dist_to_bot + 1)
-                    self.propagate_sound(pos, grid_cells, mics, t, dist + dist_to_bot, 'bot')
+                    self.propagate_sound_old(pos, grid_cells, mics, t, dist + dist_to_bot, 'bot')
 
     def propagate_sound(self,pos,grid_cells,mics,dist = 0,come_from =  None, previous_cells = []):
         
