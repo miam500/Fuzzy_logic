@@ -1,6 +1,8 @@
 import pygame
 from noise import*
-
+import numpy as np
+import scipy.io
+from map import WIDTH, TILE
 
 class Player:
     def __init__(self, pos, size = 16):
@@ -20,6 +22,8 @@ class Player:
         self.move_right = False
         self.move_up = False
         self.move_down = False
+        
+        self.noises = np.zeros(3)
     
     def add_noise(self,noise):
         self.noise = noise
@@ -37,6 +41,25 @@ class Player:
             self.move_up= True
         if key == pygame.K_DOWN:
             self.move_down= True
+            
+    def save_noise(self,grid_cells,mics,t):
+        self.propagate_sound(grid_cells,mics,t,True)
+
+    def save_noises_to_file(self):
+        reps = int(WIDTH/TILE)
+        outx = []
+        outy = []
+        for i in range(0, reps):
+            outx = np.append(outx, np.repeat((i * TILE) + TILE/2, reps))
+            outy = np.append(outy, np.arange(TILE/2, (reps*TILE)+TILE/2, TILE))
+        data = {
+            "in1": self.noises[1:len(self.noises), 0],
+            "in2": self.noises[1:len(self.noises), 1],
+            "in3": self.noises[1:len(self.noises), 2],
+            "outx": np.array(outx).astype(int),
+            "outy": np.array(outy).astype(int)
+        }
+        scipy.io.savemat('iodatacustom2.mat', data)
 
     def stop_moving(self,key):
         if key == pygame.K_LEFT:
@@ -94,24 +117,48 @@ class Player:
     def get_pos(self):
         return self.x,self.y
 
-    def propagate_sound(self,grid_cells,mics,t,method = 'astar'):
+    def propagate_sound(self,grid_cells,mics,t,save=False,method = 'astar'):
         if method == 'astar':
             self.noise.propagate_sound_astar(self.get_pos(),grid_cells,t,mics)
             return
         elif method == 'dijstra': ### Do not use
             self.noise.propagate_sound_dijkstra(self.get_pos(),grid_cells,mics,previous_cells=[])
+        elif method == 'old':
+            self.noise.propagate_sound_old(self.get_pos(), grid_cells, mics, t)
         else:
             self.noise.propagate_sound(self.get_pos(),grid_cells,mics,previous_cells=[])
-        
+        if save:
+            noises = []
         for mic in mics:
             cell = grid_cells[mic.cell_idx[0]][mic.cell_idx[1]]
             distx = abs(mic.x-cell.pos[0])
             disty = abs(mic.y-cell.pos[1])
             dist = distx + disty + cell.dist
-            mic.record(self.noise.get_apparent_sound(t,dist),t)
-        
+            if not save:
+                mic.record(self.noise.get_apparent_sound(t,dist),t)
+            else:
+                noises = np.append(noises, self.noise.get_apparent_sound(t, dist))
+        if save:
+            if self.noises.shape[0] == 1:
+                self.noises = noises
+            else:
+                self.noises = np.vstack((self.noises, noises))
         
         for col in grid_cells:
             for cell in col:
                 cell.dist = 99999
+                
+    def estimate_pos(self, fuzzy_ctrl, mics, grid_cells, t):
+        for k in range(0, len(mics)):
+            cell = grid_cells[mics[k].cell_idx[0]][mics[k].cell_idx[1]]
+            distx = abs(mics[k].x - cell.pos[0])
+            disty = abs(mics[k].y - cell.pos[1])
+            dist = distx + disty + cell.dist
+            sound = self.noise.get_apparent_sound(t, dist)
+            fuzzy_ctrl.fc.input["mic"+str(k+1)] = sound
+
+        fuzzy_ctrl.fc.compute()
+        est_x = fuzzy_ctrl.fc.output["posx"]
+        est_y = fuzzy_ctrl.fc.output["posy"]
+        return [est_x, est_y]
 
