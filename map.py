@@ -17,7 +17,7 @@ COLOR_VISITED = pygame.Color('black')
 COLOR_CURRENT = pygame.Color('yellow')
 COLOR_PREDICTION = pygame.Color('blue')
 
-def get_map(seed):
+def get_map(seed, nmb_mic=3):
     from os.path import exists
     from os import getcwd
     
@@ -28,7 +28,7 @@ def get_map(seed):
     else:
         grid_cells =  generate_map(seed)
     
-    mics = place_mics(grid_cells,3,seed)
+    mics = place_mics(grid_cells,nmb_mic,seed)
 
     return grid_cells, mics
 
