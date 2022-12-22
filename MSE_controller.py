@@ -11,7 +11,7 @@ from noise import *
 
 
 class Controller():
-    def __init__(self,grid_cells,mics,sampling_grid =20,membership_fcns = 5):
+    def __init__(self,grid_cells,mics,sampling_grid =5,membership_fcns = 5):
         self.n_membership = membership_fcns
         self.grid = grid_cells
         self.mics = mics
@@ -49,15 +49,11 @@ class Controller():
 
         sampling_data = np.array(sampling_data)
         cntr, u, u0, d, jm, p, fpc = fuzz.cmeans(data=sampling_data.T,c=membership_fcns,m=2,error=0.005, maxiter=1000, init=None)
-        #self.fcm = FCM(n_clusters=membership_fcns)
-        #self.fcm.fit(sampling_data)
+        
         self.centers = {}
         for i in range(len(self.get_input())):
             key = f"center_{i}"
             self.centers[key] = np.array([cntr[:, i]])
-        #self.centers_i = np.array([cntr[:,0]])
-        #self.centers_j = np.array([cntr[:,1]])
-        #self.centers_k = np.array([cntr[:,2]])
         
         return           
     
@@ -174,16 +170,10 @@ class MSE_Fuzzy(Controller):
             mic.t = []
     
     def get_eps(self):
-        #eps = np.zeros(self.n_membership ** len(self.mics))
-        #mics = self.get_input()
         mics = {}
         for i, val in enumerate(self.get_input()):
             key = f"mic_{i}"
             mics[key] = np.array([[val]])
-        #mic_i, mic_j, mic_k, mic_w = self.get_input()
-        #mic_i = np.array([[mic_i]])
-        #mic_j = np.array([[mic_j]])
-        #mic_k = np.array([[mic_k]])
         eps = np.zeros(self.n_membership ** len(mics))
 
         mem = []
@@ -203,13 +193,6 @@ class MSE_Fuzzy(Controller):
             p.append(p_i)
             fpc.append(fpc_i)
 
-
-        #mem_i, u0, d, jm, p, fpc = fuzz.cluster.cmeans_predict(test_data=mic_i, cntr_trained=self.centers["center_0"].T, m=2,
-        #                                                       error=0.005, maxiter=1000, init=None, seed=None)
-        #mem_j, u0, d, jm, p, fpc = fuzz.cluster.cmeans_predict(test_data=mic_j, cntr_trained=self.centers["center_1"].T, m=2,
-        #                                                       error=0.005, maxiter=1000, init=None, seed=None)
-        #mem_k, u0, d, jm, p, fpc = fuzz.cluster.cmeans_predict(test_data=mic_k, cntr_trained=self.centers["center_2"].T, m=2,
-        #                                                       error=0.005, maxiter=1000, init=None, seed=None)
         total_mem = 0
         for_loop = []
         for i in range(len(mics)):
@@ -218,21 +201,8 @@ class MSE_Fuzzy(Controller):
             mem_temp = 1
             for j in range(len(comb)):
                 mem_temp = mem_temp * mem[j][comb[j]]
-            #esp_temp = 0
-            #for m in range(len(mics)):
-            #    if m == len(mics)-1:
-            #        esp_temp += comb[m]
-            #    else:
-            #        esp_temp += (comb[m] * self.n_membership)**(len(mics)-1-m)
-
             eps[i] = mem_temp
             total_mem += mem_temp
-        #for i in range(self.n_membership):
-        #    for j in range(self.n_membership):
-        #       for k in range(self.n_membership):
-        #            mem = mem_i[i] * mem_j[j] * mem_k[k]
-        #            eps[i * self.n_membership ** 2 + j * self.n_membership + k] = mem
-        #            total_mem += mem
 
         if total_mem != 0:
             eps = eps / total_mem
