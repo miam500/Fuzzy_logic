@@ -1,7 +1,7 @@
 from fuzz_conv_call import *
 from fuzzyLogic_MLFE import MLFE
 from fuzzyLogic_MSE import MSE
-
+from fuzzyLogic_y import *
 ##############################
 # décommenté "test_conventinnal()" pour tester la technique conventionnel
 #
@@ -26,3 +26,8 @@ MSE('Linear')
 #
 ##############################
 #MLFE()
+##############################
+# décommenté "fuzzy_technique_2()" pour tester la technique 2
+#
+##############################
+#fuzzy_technique_2()
